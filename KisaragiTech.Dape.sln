@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KisaragiTech.Darp", "KisaragiTech.Darp\KisaragiTech.Darp.csproj", "{847E1E12-5B38-49CB-BB66-9B457086533F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KisaragiTech.Dape", "KisaragiTech.Dape\KisaragiTech.Dape.csproj", "{847E1E12-5B38-49CB-BB66-9B457086533F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
