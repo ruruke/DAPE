@@ -36,11 +36,18 @@ Cf Queueなどを活用してバッチ処理を行う予定 - 後でちゃんと
 
 ### 構築するとき
 
-Redis の SortedSet を活用して Fanout-timeline を構築する
+Redis の [SortedSet] を活用して [Fanout-timeline] を構築する
 
-Fanout-timeline: https://www.infoq.com/presentations/Twitter-Timeline-Scalability/
+[SortedSet]: https://valkey.io/topics/sorted-sets/
+[Fanout-timeline]: https://www.infoq.com/presentations/Twitter-Timeline-Scalability/
 
-ログインユーザー1人につき、最新N件を持っておく (N <= 3000)
+Aliceがノートした時、Aliceの各フォロワーのID`followee_id` に対して `timeline:home:{followee_id}` キーへ更新をかける \
+→投稿時刻のUnixTimestampをスコア、投稿IDをキーとする`ZADD`コマンドを発行する
+
+取得時は`ZREVRANGE`コマンドでとってくる
+
+ログインユーザー1人につき、最新N件を持っておく (N <= 3000) \
+→古くなったり溢れたりしたらキャッシュ削除でキャッシュがかさまないようにする
 
 ### データベースにフォールバックすることによって生まれるパフォーマンスのデグレを防ぐために意図的に導入する非正規化構造
 #### タイムラインを構築するときの補助ノード
