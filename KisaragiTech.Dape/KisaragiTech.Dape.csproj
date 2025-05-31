@@ -6,8 +6,8 @@
         <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <RootNamespace>KisaragiTech.Dape</RootNamespace>
-        <!-- Arch Linux 対策 -->
-        <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
+        <!-- Arch Linux 対策、linux-arm64はOCIのコンピュートインスタンス用 -->
+        <RuntimeIdentifiers>win-x64;osx-x64;linux-x64;linux-arm64</RuntimeIdentifiers>
     </PropertyGroup>
 
     <ItemGroup>
