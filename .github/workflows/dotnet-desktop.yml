@@ -39,8 +39,9 @@ jobs:
         Configuration: ${{ matrix.configuration }}
 
     - name: Build
-      run: dotnet build --config ${{ matrix.configuration }}
+      run: dotnet build --configuration ${{ matrix.configuration }}
     # Execute all unit tests in the solution
     - name: Execute unit tests
-      run: dotnet test --config ${{ matrix.configuration }}
+      run: dotnet test --configuration ${{ matrix.configuration }} --no-build
+      if: ${{ matrix.configuration == 'Debug' }}
 
