@@ -38,5 +38,10 @@ Neo4jの初期ユーザーはすべての権限を持っているため、適宜
 }
 ```
 
+### テスト
+```shell
+$ dotnet test
+```
+
 ## ライセンス
 [LICENSE.md](./LICENSE.md) を参照
