@@ -6,6 +6,8 @@
         <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <RootNamespace>KisaragiTech.Dape</RootNamespace>
+        <!-- Arch Linux 対策 -->
+        <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
     </PropertyGroup>
 
     <ItemGroup>
