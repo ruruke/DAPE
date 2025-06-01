@@ -67,8 +67,7 @@ internal static class Program
                 else
                 {
                     Console.WriteLine("Not initialized");
-                    // TODO: 実際のユーザー作成・挿入処理
-                    // - パスワードはCSPRNGで生成すること
+                    // TODO: ルートユーザー作成・挿入処理
                 }
             });
         });
