@@ -26,7 +26,7 @@ DAPE は動作に以下のソフトウェアを必要とします。
 ### 推奨開発環境
 
 * Jetbrains Rider
-    * [plugins.jetbrains.com/plugin/20417](https://plugins.jetbrains.com/plugin/20417)
+    * [Graph Database](https://plugins.jetbrains.com/plugin/20417)
 
 ### DAPE の立ち上げ
 
