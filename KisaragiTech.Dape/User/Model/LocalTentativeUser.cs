@@ -1,4 +1,7 @@
-namespace KisaragiTech.Dape.User;
+using KisaragiTech.Dape.User.Interface;
+using KisaragiTech.Dape.User.Service;
+
+namespace KisaragiTech.Dape.User.Model;
 
 /// <summary>
 /// 仮登録したローカルユーザー。仮ユーザーができることは本登録を完了させること、時間切れでキューから削除されること。

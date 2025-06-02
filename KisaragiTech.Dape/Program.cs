@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using KisaragiTech.Dape.Config;
 using Neo4j.Driver;
 using System;
-using KisaragiTech.Dape.Database;
+using KisaragiTech.Dape.User.Database;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;

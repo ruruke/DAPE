@@ -1,6 +1,7 @@
 using System;
+using KisaragiTech.Dape.User.Model;
 
-namespace KisaragiTech.Dape.User;
+namespace KisaragiTech.Dape.User.Service;
 
 public static class UserIDGenerationService
 {

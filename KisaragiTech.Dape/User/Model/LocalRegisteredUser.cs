@@ -1,4 +1,6 @@
-namespace KisaragiTech.Dape.User;
+using KisaragiTech.Dape.User.Interface;
+
+namespace KisaragiTech.Dape.User.Model;
 
 /// <summary>
 /// 本登録したローカルユーザー。必要な権限を持っていれば各種操作が行えるようになる。

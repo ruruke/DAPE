@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Neo4j.Driver;
 
-namespace KisaragiTech.Dape.Database;
+namespace KisaragiTech.Dape.User.Database;
 
 internal sealed class UserRepositoryImpl
 {
