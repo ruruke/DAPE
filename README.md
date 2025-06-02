@@ -55,5 +55,8 @@ Neo4jの初期ユーザーはすべての権限を持っているため、適宜
 $ dotnet test
 ```
 
+## よくある質問
+[FAQ.md](./FAQ.md) を参照
+
 ## ライセンス
 [LICENSE.md](./LICENSE.md) を参照
