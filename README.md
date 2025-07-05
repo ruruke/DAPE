@@ -20,13 +20,13 @@ DAPE は動作に以下のソフトウェアを必要とします。
 
 また、動作確認を行う場合は追加で以下のソフトウェアも必要です。
 
-* .NET SDK 9
+* .NET SDK 9.0.6
     * ASP.NET もインストールしてください
 
 ### 推奨開発環境
 
 * Jetbrains Rider
-    * [plugins.jetbrains.com/plugin/20417](https://plugins.jetbrains.com/plugin/20417)
+    * [Graph Database](https://plugins.jetbrains.com/plugin/20417)
 
 ### DAPE の立ち上げ
 
@@ -54,6 +54,9 @@ Neo4jの初期ユーザーはすべての権限を持っているため、適宜
 ```shell
 $ dotnet test
 ```
+
+## よくある質問
+[FAQ.md](./FAQ.md) を参照
 
 ## ライセンス
 [LICENSE.md](./LICENSE.md) を参照
