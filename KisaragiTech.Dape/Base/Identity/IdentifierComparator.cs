@@ -1,6 +1,6 @@
 using System;
 
-namespace KisaragiTech.Dape.Base;
+namespace KisaragiTech.Dape.Base.Identity;
 
 public static class IdentifierComparator
 {

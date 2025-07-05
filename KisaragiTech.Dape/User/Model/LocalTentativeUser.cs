@@ -6,7 +6,7 @@ namespace KisaragiTech.Dape.User.Model;
 /// <summary>
 /// 仮登録したローカルユーザー。仮ユーザーができることは本登録を完了させること、時間切れでキューから削除されること。
 /// </summary>
-public class LocalTentativeUser : IUser
+public sealed class LocalTentativeUser : ILocalUser
 {
     private readonly UserID _identifier;
     private readonly string _preferredHandle;
@@ -31,8 +31,11 @@ public class LocalTentativeUser : IUser
         return _preferredHandle;
     }
 
+    /*
+     // TODO: 後で復活させる
     public LocalRegisteredUser ToRegisteredUser()
     {
         return new LocalRegisteredUser(_identifier, _preferredHandle);
     }
+    */
 }

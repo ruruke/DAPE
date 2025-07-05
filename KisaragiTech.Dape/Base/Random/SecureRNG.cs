@@ -1,6 +1,6 @@
 using System;
 
-namespace KisaragiTech.Dape;
+namespace KisaragiTech.Dape.Base.Random;
 
 public static class SecureRNG
 {

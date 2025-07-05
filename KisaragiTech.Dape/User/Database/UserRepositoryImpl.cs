@@ -35,7 +35,7 @@ internal sealed class UserRepositoryImpl
         return await session.ExecuteReadAsync(async tx =>
         {
             // language=cypher
-            var query = "MATCH (n:Person { handle: $handle }) RETURN true AS exists LIMIT 1";
+            const string query = "MATCH (n:Person { handle: $handle }) RETURN true AS exists LIMIT 1";
             var cursor = await tx.RunAsync(query, new { handle = preferredHandle });
 
             return await cursor.FetchAsync();
@@ -59,10 +59,20 @@ internal sealed class UserRepositoryImpl
         await session.ExecuteWriteAsync(tx =>
         {
             // language=cypher
-            var query = "CREATE (n:Person { handle: $name, id: $id })";
+            const string query = "CREATE (n:Person { handle: $handle, id: $id })";
             var parameters = new { handle = user.GetPreferredHandle(), id = user.GetIdentifier().Raw.ToString() };
 
-            return tx.RunAsync(query);
+            return tx.RunAsync(query, parameters);
         });
+    }
+
+    public async Task CreateRootUser(LocalRegisteredUser user)
+    {
+        if (await this.HasRootUser())
+        {
+            throw new InvalidOperationException("ルートユーザーはすでに存在します");
+        }
+
+        await InsertUser(user);
     }
 }

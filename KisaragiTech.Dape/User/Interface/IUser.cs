@@ -1,4 +1,4 @@
-using KisaragiTech.Dape.Base;
+using KisaragiTech.Dape.Base.Identity;
 using KisaragiTech.Dape.User.Model;
 
 namespace KisaragiTech.Dape.User.Interface;
