@@ -1,0 +1,10 @@
+{
+  "$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/stylecop.schema.json",
+  "settings": {
+    "documentationRules": {
+      "companyName": "KisaragiTech",
+      "documentInternalElements": false,
+      "documentPrivateElements": false
+    }
+  }
+}
