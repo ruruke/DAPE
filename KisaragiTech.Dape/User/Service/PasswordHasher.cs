@@ -3,9 +3,9 @@ using KisaragiTech.Dape.Base.Random;
 using KisaragiTech.Dape.User.Model;
 using Konscious.Security.Cryptography;
 
-namespace KisaragiTech.Dape;
+namespace KisaragiTech.Dape.User.Service;
 
-public static class PasswordGenerator
+public static class PasswordHasher
 {
     public static HashedPassword CreateHashedPassword(string input)
     {
@@ -14,13 +14,12 @@ public static class PasswordGenerator
 
         var argon2 = new Argon2id(password)
         {
-            // TODO: 検証のときにもこれらのパスワードが必要！！
             Salt = salt,
             DegreeOfParallelism = 2,
             MemorySize = 65536,
             Iterations = 2,
         };
 
-        return new HashedPassword(argon2.GetBytes(128));
+        return new HashedPassword(argon2.GetBytes(128), salt, 2, 65536, 2);
     }
 }

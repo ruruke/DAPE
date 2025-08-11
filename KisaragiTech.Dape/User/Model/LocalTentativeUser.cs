@@ -31,11 +31,8 @@ public sealed class LocalTentativeUser : ILocalUser
         return _preferredHandle;
     }
 
-    /*
-     // TODO: 後で復活させる
-    public LocalRegisteredUser ToRegisteredUser()
+    public LocalRegisteredUser ToRegisteredUser(string rawPassword)
     {
-        return new LocalRegisteredUser(_identifier, _preferredHandle);
+        return new LocalRegisteredUser(_identifier, _preferredHandle, PasswordHasher.CreateHashedPassword(rawPassword));
     }
-    */
 }

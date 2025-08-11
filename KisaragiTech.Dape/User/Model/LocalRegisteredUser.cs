@@ -1,4 +1,5 @@
 using KisaragiTech.Dape.User.Interface;
+using KisaragiTech.Dape.User.Service;
 
 namespace KisaragiTech.Dape.User.Model;
 
@@ -21,6 +22,6 @@ public sealed class LocalRegisteredUser(UserID identifier, string preferredHandl
 
     public bool VerifyPassword(string raw)
     {
-        return hashedPassword.Equals(PasswordGenerator.CreateHashedPassword(raw));
+        return hashedPassword.Equals(PasswordHasher.CreateHashedPassword(raw));
     }
 }
