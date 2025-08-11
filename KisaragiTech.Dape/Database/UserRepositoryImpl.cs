@@ -6,16 +6,16 @@ namespace KisaragiTech.Dape.Database;
 internal sealed class UserRepositoryImpl
 {
     private readonly IDriver driver;
-    
+
     internal UserRepositoryImpl(IDriver driver)
     {
         this.driver = driver;
     }
-    
+
     public async ValueTask<bool> HasRootUser()
     {
-        await using var session = driver.AsyncSession(o => o.WithDefaultAccessMode(AccessMode.Read));
-        
+        await using var session = this.driver.AsyncSession(o => o.WithDefaultAccessMode(AccessMode.Read));
+
         var doesExist = await session.ExecuteReadAsync(async tx =>
         {
             // TODO: ORMてきなメソッドの方に置き換えたほうがいいかも
