@@ -1,10 +1,11 @@
-﻿using global::CommandLine;
-using KisaragiTech.Dape.CommandLine;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+
+using global::CommandLine;
+using KisaragiTech.Dape.CommandLine;
 using KisaragiTech.Dape.Config;
 using Neo4j.Driver;
-using System;
 using KisaragiTech.Dape.Database;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,7 +15,7 @@ namespace KisaragiTech.Dape;
 
 internal static class Program
 {
-    static int Main(string[] args)
+    private static int Main(string[] args)
     {
         var sw = Parser.Default.ParseArguments<Options>(args).GetOrThrow()!;
         var configPath = sw.RunDir + "/config.json";
@@ -23,6 +24,7 @@ internal static class Program
             Console.Error.WriteLine($"パス {configPath} が存在しません");
             return 1;
         }
+
         var config = RootConfig.DeserializeFromJson(File.ReadAllText(configPath));
         if (config == null)
         {
@@ -42,13 +44,14 @@ internal static class Program
             // TODO: Dockerを導入するときにランダムポートからコンフィグ指定にする
             serverOptions.Listen(System.Net.IPAddress.Loopback, 0);
         });
-        
+
         var app = builder.Build();
 
         // 開発環境ではデベロッパーツールを使用
         if (app.Environment.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
+
             // TODO: UseDeveloperExceptionPage は HTML でエラーを返すらしいので、実際のAPIの運用を始めるときはExceptionを
             // JSONで返せるようにしておいたほうが良さそう
         }
@@ -69,10 +72,12 @@ internal static class Program
             else
             {
                 Console.WriteLine("Not initialized");
+
                 // TODO: 実際のユーザー作成・挿入処理
                 // - パスワードはCSPRNGで生成すること
             }
         });
+
         // IPアドレスとポートは起動時に表示されるので不要
 
         // 静的ファイルとルーティングを有効化
