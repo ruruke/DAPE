@@ -1,6 +1,3 @@
 namespace KisaragiTech.Dape.User.Interface;
 
-public interface ILocalUser : IUser
-{
-    
-}
+public interface ILocalUser : IUser;

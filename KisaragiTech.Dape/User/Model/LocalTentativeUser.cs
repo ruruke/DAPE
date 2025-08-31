@@ -8,22 +8,22 @@ namespace KisaragiTech.Dape.User.Model;
 /// </summary>
 public sealed class LocalTentativeUser : ILocalUser
 {
-    private readonly UserID _identifier;
-    private readonly string _preferredHandle;
+    private readonly UserID identifier;
+    private readonly string preferredHandle;
 
     /// <see cref="TentativeUserFactory.Create"/> を使うこと。
-    /// 
+    ///
     /// <param name="identifier"></param>
     /// <param name="preferredHandle"></param>
     internal LocalTentativeUser(UserID identifier, string preferredHandle)
     {
-        this._identifier = identifier;
-        this._preferredHandle = preferredHandle;
+        this.identifier = identifier;
+        this.preferredHandle = preferredHandle;
     }
 
-    public UserID GetIdentifier() => this._identifier;
+    public UserID GetIdentifier() => this.identifier;
 
-    public string GetPreferredHandle() => this._preferredHandle;
+    public string GetPreferredHandle() => this.preferredHandle;
 
-    public LocalRegisteredUser ToRegisteredUser(HashedPassword hashedPassword) => new(this._identifier, this._preferredHandle, hashedPassword);
+    public LocalRegisteredUser ToRegisteredUser(HashedPassword hashedPassword) => new(this.identifier, this.preferredHandle, hashedPassword);
 }

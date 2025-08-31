@@ -6,12 +6,16 @@ namespace KisaragiTech.Dape.User.Service;
 
 public static class PasswordGenerator
 {
-    // 構造レスで使う文字集合（視認性も考慮してl,1,O,0は除外）
+    // 文字集合（視認性も考慮してl,1,O,0は除外）
     private const string Alphabet =
-        "ABCDEFGHJKLMNPQRSTUVWXYZ" +  // 大文字 (O除く)
-        "abcdefghijkmnopqrstuvwxyz" + // 小文字 (l除く)
-        "23456789" +                  // 数字 (0と1除く)
-        "!@#$%^&*()-_=+[]{}|;:,.<>?"; // 記号（調整可）
+        // 大文字 (O除く)
+        "ABCDEFGHJKLMNPQRSTUVWXYZ" +
+        // 小文字 (l除く)
+        "abcdefghijkmnopqrstuvwxyz" +
+        // 数字 (0と1除く)
+        "23456789" +
+        // 記号（調整可）
+        "!@#$%^&*()-_=+[]{}|;:,.<>?";
 
     public static string Generate(int length = 20)
     {

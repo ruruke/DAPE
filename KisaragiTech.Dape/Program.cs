@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 
+// ReSharper disable once RedundantNameQualifier
 using global::CommandLine;
 using KisaragiTech.Dape.CommandLine;
 using KisaragiTech.Dape.Config;
@@ -74,8 +75,13 @@ internal static class Program
                     Console.WriteLine("Not initialized");
                     var raw = PasswordGenerator.Generate();
                     Console.WriteLine($"Your root password: {raw}");
-                    await repo.CreateRootUser(new LocalRegisteredUser(new UserID(Guid.NewGuid()), "root",
-                        PasswordHasher.CreateHashedPassword(raw)));
+                    await repo.CreateRootUser(
+                        new LocalRegisteredUser(
+                            new UserID(Guid.NewGuid()),
+                            "root",
+                            PasswordHasher.CreateHashedPassword(raw)
+                        )
+                    );
                 }
             });
         });

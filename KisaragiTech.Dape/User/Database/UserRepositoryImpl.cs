@@ -9,16 +9,16 @@ namespace KisaragiTech.Dape.User.Database;
 internal sealed class UserRepositoryImpl
 {
     private readonly IDriver driver;
-    
+
     internal UserRepositoryImpl(IDriver driver)
     {
         this.driver = driver;
     }
-    
+
     public async Task<bool> HasRootUser()
     {
-        await using var session = driver.AsyncSession(o => o.WithDefaultAccessMode(AccessMode.Read));
-        
+        await using var session = this.driver.AsyncSession(o => o.WithDefaultAccessMode(AccessMode.Read));
+
         return await session.ExecuteReadAsync(async tx =>
         {
             // language=cypher
@@ -30,7 +30,7 @@ internal sealed class UserRepositoryImpl
 
     public async Task<bool> FindUserByPreferredHandle(string preferredHandle)
     {
-        await using var session = driver.AsyncSession(sess => sess.WithDefaultAccessMode(AccessMode.Read));
+        await using var session = this.driver.AsyncSession(sess => sess.WithDefaultAccessMode(AccessMode.Read));
 
         return await session.ExecuteReadAsync(async tx =>
         {
@@ -53,8 +53,8 @@ internal sealed class UserRepositoryImpl
     public async Task InsertUser(LocalRegisteredUser user)
     {
         await this.AssertPreferredHandleUniqueness(user);
-        
-        await using var session = driver.AsyncSession(sess => sess.WithDefaultAccessMode(AccessMode.Write));
+
+        await using var session = this.driver.AsyncSession(sess => sess.WithDefaultAccessMode(AccessMode.Write));
 
         await session.ExecuteWriteAsync(tx =>
         {
@@ -73,6 +73,6 @@ internal sealed class UserRepositoryImpl
             throw new InvalidOperationException("ルートユーザーはすでに存在します");
         }
 
-        await InsertUser(user);
+        await this.InsertUser(user);
     }
 }

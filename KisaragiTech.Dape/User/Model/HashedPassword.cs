@@ -11,9 +11,9 @@ public sealed record HashedPassword(ReadOnlyMemory<byte> Hash, ReadOnlyMemory<by
 {
     public bool Equals(HashedPassword? other) => other != null && CryptographicOperations.FixedTimeEquals(this.Hash.Span, other.Hash.Span);
 
-    public override int GetHashCode() => System.HashCode.Combine(Hash);
+    public override int GetHashCode() => System.HashCode.Combine(this.Hash);
 
-    public string ToSerializationFormat() => Convert.ToBase64String(Hash.Span) + ":" + Convert.ToBase64String(Salt.Span) + ":" + Iterations + ":" + MemorySize + ":" + DegreeOfParallelism;
+    public string ToSerializationFormat() => Convert.ToBase64String(this.Hash.Span) + ":" + Convert.ToBase64String(this.Salt.Span) + ":" + this.Iterations + ":" + this.MemorySize + ":" + this.DegreeOfParallelism;
 
     public static HashedPassword Deserialize(string serialized)
     {
@@ -32,15 +32,15 @@ public sealed record HashedPassword(ReadOnlyMemory<byte> Hash, ReadOnlyMemory<by
 
     public bool Verify(string password)
     {
-        var salt = Salt.ToArray();
+        var salt = this.Salt.ToArray();
         using var argon2 = new Argon2id(System.Text.Encoding.UTF8.GetBytes(password))
         {
             Salt = salt,
-            Iterations = Iterations,
-            MemorySize = MemorySize,
-            DegreeOfParallelism = DegreeOfParallelism,
+            Iterations = this.Iterations,
+            MemorySize = this.MemorySize,
+            DegreeOfParallelism = this.DegreeOfParallelism,
         };
-        var computed = argon2.GetBytes(Hash.Length);
-        return CryptographicOperations.FixedTimeEquals(computed, Hash.Span);
+        var computed = argon2.GetBytes(this.Hash.Length);
+        return CryptographicOperations.FixedTimeEquals(computed, this.Hash.Span);
     }
 }
