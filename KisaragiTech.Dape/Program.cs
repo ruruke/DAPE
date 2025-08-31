@@ -1,10 +1,12 @@
-﻿using global::CommandLine;
-using KisaragiTech.Dape.CommandLine;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+
+using global::CommandLine;
+using KisaragiTech.Dape.CommandLine;
 using KisaragiTech.Dape.Config;
 using Neo4j.Driver;
-using System;
+using KisaragiTech.Dape.Database;
 using KisaragiTech.Dape.User.Database;
 using KisaragiTech.Dape.User.Model;
 using KisaragiTech.Dape.User.Service;
@@ -25,6 +27,7 @@ internal static class Program
             Console.Error.WriteLine($"パス {configPath} が存在しません");
             return 1;
         }
+
         var config = RootConfig.DeserializeFromJson(File.ReadAllText(configPath));
         if (config == null)
         {
@@ -44,13 +47,14 @@ internal static class Program
             // TODO: Dockerを導入するときにランダムポートからコンフィグ指定にする
             serverOptions.Listen(System.Net.IPAddress.Loopback, 0);
         });
-        
+
         var app = builder.Build();
 
         // 開発環境ではデベロッパーツールを使用
         if (app.Environment.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
+
             // TODO: UseDeveloperExceptionPage は HTML でエラーを返すらしいので、実際のAPIの運用を始めるときはExceptionを
             // JSONで返せるようにしておいたほうが良さそう
         }
@@ -76,6 +80,7 @@ internal static class Program
                 }
             });
         });
+
         // IPアドレスとポートは起動時に表示されるので不要
 
         // 静的ファイルとルーティングを有効化
