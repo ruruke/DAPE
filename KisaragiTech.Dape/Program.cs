@@ -6,7 +6,6 @@ using global::CommandLine;
 using KisaragiTech.Dape.CommandLine;
 using KisaragiTech.Dape.Config;
 using Neo4j.Driver;
-using KisaragiTech.Dape.Database;
 using KisaragiTech.Dape.User.Database;
 using KisaragiTech.Dape.User.Model;
 using KisaragiTech.Dape.User.Service;
