@@ -30,27 +30,21 @@ public static class HashedPasswordTests
     }
 
     [Fact]
-    private static void Colon4()
-    {
-        Assert.Throws<InvalidOperationException>(() => HashedPassword.Deserialize("123:123:123:123:123"));
-    }
-
-    [Fact]
     private static void Colon4A()
     {
-        Assert.Throws<InvalidOperationException>(() => HashedPassword.Deserialize("123:123:123:123:123"));
+        Assert.Throws<FormatException>(() => HashedPassword.Deserialize("123:123:123:123:123"));
     }
 
     [Fact]
     private static void Colon4B()
     {
-        Assert.Throws<InvalidOperationException>(() => HashedPassword.Deserialize("SGVsbG8sIHdvcmxkIQ==:123:123:123:123"));
+        Assert.Throws<FormatException>(() => HashedPassword.Deserialize("SGVsbG8sIHdvcmxkIQ==:123:123:123:123"));
     }
 
     [Fact]
     private static void Colon4C()
     {
-        Assert.Throws<InvalidOperationException>(() => HashedPassword.Deserialize("123:SGVsbG8sIHdvcmxkIQ==:123:123:123"));
+        Assert.Throws<FormatException>(() => HashedPassword.Deserialize("123:SGVsbG8sIHdvcmxkIQ==:123:123:123"));
     }
 
     [Fact]
