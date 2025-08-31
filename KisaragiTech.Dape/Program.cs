@@ -6,6 +6,8 @@ using KisaragiTech.Dape.Config;
 using Neo4j.Driver;
 using System;
 using KisaragiTech.Dape.User.Database;
+using KisaragiTech.Dape.User.Model;
+using KisaragiTech.Dape.User.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
@@ -14,7 +16,7 @@ namespace KisaragiTech.Dape;
 
 internal static class Program
 {
-    static int Main(string[] args)
+    private static int Main(string[] args)
     {
         var sw = Parser.Default.ParseArguments<Options>(args).GetOrThrow()!;
         var configPath = sw.RunDir + "/config.json";
@@ -67,7 +69,10 @@ internal static class Program
                 else
                 {
                     Console.WriteLine("Not initialized");
-                    // TODO: ルートユーザー作成・挿入処理
+                    var raw = PasswordGenerator.Generate();
+                    Console.WriteLine($"Your root password: {raw}");
+                    await repo.CreateRootUser(new LocalRegisteredUser(new UserID(Guid.NewGuid()), "root",
+                        PasswordHasher.CreateHashedPassword(raw)));
                 }
             });
         });

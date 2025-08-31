@@ -18,6 +18,8 @@ public static class StringSplitter
 
         // 最後のピース
         if (start <= haystack.Length)
+        {
             yield return haystack.AsMemory(start);
+        }
     }
 }

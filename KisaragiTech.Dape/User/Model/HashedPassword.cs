@@ -9,22 +9,13 @@ namespace KisaragiTech.Dape.User.Model;
 
 public sealed record HashedPassword(ReadOnlyMemory<byte> Hash, ReadOnlyMemory<byte> Salt, int Iterations, int MemorySize, int DegreeOfParallelism)
 {
-    public bool Equals(HashedPassword? other)
-    {
-        return other != null && CryptographicOperations.FixedTimeEquals(this.Hash.Span, other.Hash.Span);
-    }
+    public bool Equals(HashedPassword? other) => other != null && CryptographicOperations.FixedTimeEquals(this.Hash.Span, other.Hash.Span);
 
-    public override int GetHashCode()
-    {
-        return System.HashCode.Combine(Hash);
-    }
+    public override int GetHashCode() => System.HashCode.Combine(Hash);
 
-    public string ToSerializationFormat()
-    {
-        return Convert.ToBase64String(Hash.Span) + ":" + Convert.ToBase64String(Salt.Span) + ":" + Iterations + ":" + MemorySize + ":" + DegreeOfParallelism;
-    }
+    public string ToSerializationFormat() => Convert.ToBase64String(Hash.Span) + ":" + Convert.ToBase64String(Salt.Span) + ":" + Iterations + ":" + MemorySize + ":" + DegreeOfParallelism;
 
-    public HashedPassword Deserialize(string serialized)
+    public static HashedPassword Deserialize(string serialized)
     {
         var parts = StringSplitter.ToMemories(serialized, ':').ToList();
         return parts switch
@@ -35,7 +26,7 @@ public sealed record HashedPassword(ReadOnlyMemory<byte> Hash, ReadOnlyMemory<by
                 int.Parse(iterations.Span, NumberStyles.Integer, CultureInfo.InvariantCulture),
                 int.Parse(memorySize.Span, NumberStyles.Integer, CultureInfo.InvariantCulture),
                 int.Parse(degreeOfParallelism.Span, NumberStyles.Integer, CultureInfo.InvariantCulture)),
-            _ => throw new InvalidOperationException("Hashed password must contain 5 parts exactly.")
+            _ => throw new InvalidOperationException("Hashed password must contain 5 parts exactly."),
         };
     }
 
@@ -47,7 +38,7 @@ public sealed record HashedPassword(ReadOnlyMemory<byte> Hash, ReadOnlyMemory<by
             Salt = salt,
             Iterations = Iterations,
             MemorySize = MemorySize,
-            DegreeOfParallelism = DegreeOfParallelism
+            DegreeOfParallelism = DegreeOfParallelism,
         };
         var computed = argon2.GetBytes(Hash.Length);
         return CryptographicOperations.FixedTimeEquals(computed, Hash.Span);

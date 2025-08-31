@@ -17,22 +17,13 @@ public sealed class LocalTentativeUser : ILocalUser
     /// <param name="preferredHandle"></param>
     internal LocalTentativeUser(UserID identifier, string preferredHandle)
     {
-        _identifier = identifier;
-        _preferredHandle = preferredHandle;
+        this._identifier = identifier;
+        this._preferredHandle = preferredHandle;
     }
 
-    public UserID GetIdentifier()
-    {
-        return _identifier;
-    }
+    public UserID GetIdentifier() => this._identifier;
 
-    public string GetPreferredHandle()
-    {
-        return _preferredHandle;
-    }
+    public string GetPreferredHandle() => this._preferredHandle;
 
-    public LocalRegisteredUser ToRegisteredUser(string rawPassword)
-    {
-        return new LocalRegisteredUser(_identifier, _preferredHandle, PasswordHasher.CreateHashedPassword(rawPassword));
-    }
+    public LocalRegisteredUser ToRegisteredUser(HashedPassword hashedPassword) => new(this._identifier, this._preferredHandle, hashedPassword);
 }
