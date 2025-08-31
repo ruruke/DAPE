@@ -10,7 +10,7 @@ public static class HashedPasswordTests
     {
         Assert.Throws<InvalidOperationException>(() => HashedPassword.Deserialize("123"));
     }
-    
+
     [Fact]
     private static void Colon1()
     {
