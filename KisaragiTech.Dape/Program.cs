@@ -20,7 +20,13 @@ internal static class Program
 {
     private static int Main(string[] args)
     {
-        var sw = Parser.Default.ParseArguments<Options>(args).GetOrThrow()!;
+        var sw = Parser.Default.ParseArguments<Options>(args).GetOrThrow();
+        if (sw == null)
+        {
+            // --version 及び --help をハンドルしてもらう
+            return 0;
+        }
+
         var configPath = sw.RunDir + "/config.json";
         if (!File.Exists(configPath))
         {

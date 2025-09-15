@@ -1,0 +1,28 @@
+name: Docker Smoke Test
+
+on:
+  pull_request:
+
+jobs:
+  smoke-test:
+    permissions: 
+      contents: read
+
+    runs-on: ubuntu-24.04
+    
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        run: |
+          docker build -t dape:test .
+
+      - name: Run container
+        run: |
+          docker run --rm dape:test --version || (echo "Container failed to start" && exit 1)
