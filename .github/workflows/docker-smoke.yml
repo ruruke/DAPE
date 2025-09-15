@@ -1,13 +1,7 @@
 name: Docker Smoke Test
 
 on:
-  push:
-    paths:
-      - 'Dockerfile'
-      - '.github/workflows/docker-smoke-test.yml'
   pull_request:
-    paths:
-      - 'Dockerfile'
 
 jobs:
   smoke-test:
