@@ -6,6 +6,8 @@ WORKDIR /src
 COPY ./KisaragiTech.Dape/*.csproj ./KisaragiTech.Dape/
 RUN dotnet restore ./KisaragiTech.Dape/KisaragiTech.Dape.csproj
 
+# StyleCop をサイレンス
+COPY ./.editorconfig ./.editorconfig
 # 残りのソースをコピー
 COPY ./KisaragiTech.Dape ./KisaragiTech.Dape
 
