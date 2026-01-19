@@ -35,15 +35,6 @@ object HashedPassword {
       }
     }
 
-  def apply(
-      hash: Array[Byte],
-      salt: Array[Byte],
-      iterations: Int,
-      memorySize: Int,
-      degreeOfParallelism: Int
-  ): HashedPassword =
-    HashedPasswordData(hash, salt, iterations, memorySize, degreeOfParallelism)
-
   def deserialize(serialized: String): Either[IllegalArgumentException, HashedPassword] = {
     val parts = StringSplitter.toSubstrings(serialized, ':').toList
     parts match {
