@@ -10,7 +10,7 @@ lazy val root = project
       "-deprecation",
       "-feature",
       "-unchecked",
-      "-Xfatal-warnings",
+      "-Werror",
       "-Wunused:all",
       "-no-indent"
     ),
