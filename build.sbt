@@ -46,7 +46,7 @@ lazy val root = project
       "org.typelevel" %% "munit-cats-effect" % "2.1.0" % Test
     ),
     assembly / assemblyJarName := "dape.jar",
-    assembly / mainClass := Some("tech.kisaragi.dape.Main"),
+    assembly / mainClass := Some("io.github.ksrgtech.dape.Main"),
     assembly / assemblyMergeStrategy := {
       case PathList("META-INF", "services", _*) => MergeStrategy.concat
       case PathList("META-INF", _*) => MergeStrategy.discard
