@@ -15,12 +15,13 @@ final case class HashedPassword(
     memorySize: Int,
     degreeOfParallelism: Int
 ) {
+
   def toSerializationFormat: String = {
     val encoder = Base64.getEncoder
     s"${encoder.encodeToString(this.hash)}:${encoder.encodeToString(this.salt)}:${this.iterations}:${this.memorySize}:${this.degreeOfParallelism}"
   }
 
-  def verify[F[_] : Sync](password: String): F[Boolean] =
+  def verify[F[_]: Sync](password: String): F[Boolean] =
     Sync[F].delay {
       val argon2 = Argon2Function.getInstance(
         this.memorySize,
