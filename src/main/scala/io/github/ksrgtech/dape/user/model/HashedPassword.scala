@@ -14,7 +14,40 @@ final case class HashedPassword(
     iterations: Int,
     memorySize: Int,
     degreeOfParallelism: Int
-)
+) {
+  def toSerializationFormat: String = {
+    val encoder = Base64.getEncoder
+    s"${encoder.encodeToString(this.hash)}:${encoder.encodeToString(this.salt)}:${this.iterations}:${this.memorySize}:${this.degreeOfParallelism}"
+  }
+
+  def verify[F[_] : Sync](password: String): F[Boolean] =
+    Sync[F].delay {
+      val argon2 = Argon2Function.getInstance(
+        this.memorySize,
+        this.iterations,
+        this.degreeOfParallelism,
+        HashedPassword.HashLength,
+        com.password4j.types.Argon2.ID
+      )
+      val computed = argon2.hash(password.getBytes("UTF-8"), this.salt).getBytes
+      MessageDigest.isEqual(computed, this.hash)
+    }
+
+  def verifyUnsafe(password: String): Boolean = {
+    val argon2 = Argon2Function.getInstance(
+      this.memorySize,
+      this.iterations,
+      this.degreeOfParallelism,
+      HashedPassword.HashLength,
+      com.password4j.types.Argon2.ID
+    )
+    val computed = argon2.hash(password.getBytes("UTF-8"), this.salt).getBytes
+    MessageDigest.isEqual(computed, this.hash)
+  }
+
+  def equalsPassword(other: HashedPassword): Boolean =
+    MessageDigest.isEqual(this.hash, other.hash)
+}
 
 object HashedPassword {
   private val HashLength: Int = 128
@@ -66,45 +99,4 @@ object HashedPassword {
       case Right(hp) => hp
       case Left(e)   => throw e
     }
-
-  extension (hp: HashedPassword) {
-    def hash: Array[Byte]        = hp.hash
-    def salt: Array[Byte]        = hp.salt
-    def iterations: Int          = hp.iterations
-    def memorySize: Int          = hp.memorySize
-    def degreeOfParallelism: Int = hp.degreeOfParallelism
-
-    def toSerializationFormat: String = {
-      val encoder = Base64.getEncoder
-      s"${encoder.encodeToString(hp.hash)}:${encoder.encodeToString(hp.salt)}:${hp.iterations}:${hp.memorySize}:${hp.degreeOfParallelism}"
-    }
-
-    def verify[F[_]: Sync](password: String): F[Boolean] =
-      Sync[F].delay {
-        val argon2 = Argon2Function.getInstance(
-          hp.memorySize,
-          hp.iterations,
-          hp.degreeOfParallelism,
-          HashLength,
-          com.password4j.types.Argon2.ID
-        )
-        val computed = argon2.hash(password.getBytes("UTF-8"), hp.salt).getBytes
-        MessageDigest.isEqual(computed, hp.hash)
-      }
-
-    def verifyUnsafe(password: String): Boolean = {
-      val argon2 = Argon2Function.getInstance(
-        hp.memorySize,
-        hp.iterations,
-        hp.degreeOfParallelism,
-        HashLength,
-        com.password4j.types.Argon2.ID
-      )
-      val computed = argon2.hash(password.getBytes("UTF-8"), hp.salt).getBytes
-      MessageDigest.isEqual(computed, hp.hash)
-    }
-
-    def equalsPassword(other: HashedPassword): Boolean =
-      MessageDigest.isEqual(hp.hash, other.hash)
-  }
 }
