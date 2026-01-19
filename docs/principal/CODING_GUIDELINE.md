@@ -8,12 +8,10 @@ DAPEにおけるコーディングガイドラインを定めます。
 
 DAPE のコアメンバーは日本語ネイティブのため、各種コミュニケーション・記述にあたっては日本語を用いることとします。
 
-### Microsoft が推奨するコーディングガイドラインをベースとして用いる
+### Scala の標準的なコーディングスタイルをベースとして用いる
 
-[Microsoft が推奨するコーディングガイドライン (英語)](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions)
-及び
-[命名ガイドライン (英語)](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/identifier-names)
-をベースとして用います。
+[Scala Style Guide](https://docs.scala-lang.org/style/)
+をベースとして用います。また、scalafmt を用いてコードフォーマットを統一します。
 
 ### 車輪の再発明をしない
 
@@ -110,38 +108,16 @@ CI が通っていないということは、システムのトラブルを除�
 
 ## 命名
 
-### C# の予約語と同じ識別子は避ける
+### Scala の予約語と同じ識別子は避ける
 
-C# の予約語と同じ識別子は避けてください。raw identifier escape を用いても同様です。
+Scala の予約語と同じ識別子は避けてください。バッククォートによるエスケープを用いても同様です。
 
-理由: `@` がタイピングしにくいため。
+理由: バッククォートがタイピングしにくいため。
 
-### 非同期メソッドの名前には `Async` を後置する
+### エフェクトを返すメソッドには型パラメータで表現する
 
-`Task` または `Task<T>` を返すメソッドには、末尾に `Async` を付けてください。
-
-例外: 明確に非同期であると分かる文脈（例: `IAsyncOperation.Execute()`）では `Async` を省略してもかまいません。
-
-理由: メソッドの使用箇所から非同期性が一目で分かるようにするためです。
-
-### `static` フィールド・プロパティの名前に `s_` を前置しない
-
-`static` なフィールド・プロパティの名前に `s_` を前置しないでください。
-
-参考: CA1716
-
-### System.Attribute のサブクラスの名前に `Attribute` を後置しない
-
-C# の属性クラスは、言語仕様上、使用時に末尾の `Attribute` を省略できます。例えば、
-
-```cs
-[Serializable]
-public class SerializableAttribute : Attribute { }
-```
-
-と書けば、`[Serializable]` とだけ記述して使えます。
-そのため、DAPE のコードベースでは属性クラス名の末尾に Attribute を付ける冗長な命名は避け、より簡潔な名前を推奨します。
-ただし、他のフレームワークやライブラリと名前が衝突しないよう注意してください。
+`F[_]` を返すメソッドでは、型クラス制約（`Sync[F]`, `Async[F]` など）を用いてエフェクトの性質を明示してください。
+トップレベル以外では `IO` を直接使用せず、抽象化された `F[_]` を用いるようにしてください。
 
 ### スコープの長さに応じて説明度が高い名前をつける
 
@@ -154,13 +130,11 @@ for ループ内など）であれば、簡潔な名前を使用してもかま�
 
 | 属性         | 	スコープが長くなる傾向の方向                                  |
 |:-----------|:-------------------------------------------------|
-| アクセス修飾子    | 	`private` < `protected` < `internal` < `public` |
-| `readonly` | ない方がスコープが長い（状態変化が起き得る）                           |
-| `static`	  | ある方がスコープが長い（インスタンスに依存しないため共有範囲が広い）               |
-| `sealed`	  | ない方がスコープが長い（継承先で使われる可能性がある）                      |
-| `virtual`  | ある方がスコープが長い（オーバーライドされ得るため多様な場所で使用されうる）           |
+| アクセス修飾子    | 	`private` < `protected` < `public` |
+| `val` vs `var` | `var` がある方がスコープが長い（状態変化が起き得る）                           |
+| `final`	  | ない方がスコープが長い（継承先で使われる可能性がある）                      |
+| `sealed`	  | `sealed` がない方がスコープが長い（継承される可能性がある）                      |
 | `abstract` | ある方がスコープが長い（継承先クラスで実装する必要がある）                    |
-| `const`    | ない方がスコープが長い（再代入が起き得る）                            |
 
 命名例:
 
@@ -168,21 +142,21 @@ for ループ内など）であれば、簡潔な名前を使用してもかま�
 |:-------------------|:-------------------------------------------------------|:----------------------------------|
 | ローカル変数（for文内）      | 	`i`, `result`                                         | 	数行以内で完結する用途なら簡潔に                 |
 | メソッド内で再利用されるローカル変数 | 	`userName`, `isRetryEnabled`	                         | 意味を明確に                            |
-| private フィールド      | 	`_lastLoginTime`                                      | 	クラス全体で使われるため説明的に                 |
-| public プロパティ・クラス名  | `UserDisplayName`, `IsAdministrator`, `OrderProcessor` | 外部に公開されるインターフェースや型として、読みやすく明確な名前に |
+| private フィールド      | 	`lastLoginTime`                                      | 	クラス全体で使われるため説明的に                 |
+| public メンバー・クラス名  | `UserDisplayName`, `IsAdministrator`, `OrderProcessor` | 外部に公開されるインターフェースや型として、読みやすく明確な名前に |
 
 ※ `i` は許容されうるが、必要に応じてもっと説明的な名前をつけること。
 
 悪い例:
 
-```cs
-private int _x; // 何の数値か分からない
+```scala
+private var x: Int = 0 // 何の数値か分からない
 ```
 
 良い例:
 
-```cs
-private int _retryCount;
+```scala
+private var retryCount: Int = 0
 ```
 
 備考:
@@ -219,50 +193,33 @@ private int _retryCount;
 * `Utility`
 * `Util`
 
-### 否定形のプロパティ命名について
+### 否定形のメンバー命名について
 
-* IsDisabled のような否定形の命名は、一般的に可読性が落ちるため避け、前向きな命名（例: IsEnabled）を推奨します。
-* ただし、肯定形プロパティのみの場合、両方用意すると冗長になるため否定形を追加しないことは許容します。
-* 否定形プロパティが存在しない場合でも、if (!x) のような否定条件は特別に許容し、読みやすさを優先します。
+* `isDisabled` のような否定形の命名は、一般的に可読性が落ちるため避け、前向きな命名（例: `isEnabled`）を推奨します。
+* ただし、肯定形メンバーのみの場合、両方用意すると冗長になるため否定形を追加しないことは許容します。
+* 否定形メンバーが存在しない場合でも、`if (!x)` のような否定条件は特別に許容し、読みやすさを優先します。
 
 ## 命名以外の構文的な規則
 
-### `var` はどこでも使う
+### 型推論を活用する
 
-我々は統合開発環境を用いてコーディングをするため、`var` が使える箇所ではどこでも `var` を使用します。
+Scala の型推論を活用し、冗長な型注釈を避けます。ただし、public な API や複雑な型については明示的な型注釈を付けてください。
 
-### `private` フィールド・プロパティ以外で型名を省略したコンストラクタの呼び出しを行わない
+### Fewer braces (optional braces) は使用しない
 
-型名を省略したコンストラクタの呼び出しを行わないでください。
+Scala 3 の Fewer braces (optional braces) 構文は使用せず、明示的なブレースを使用してください。
 
-違反例:
+理由: 一貫性と可読性のため。
 
-```cs
-Meter meter = new();
-```
+### cypherクエリは neotypes の文字列補間を用いる
 
-修正例:
+neotypes の `c""` 文字列補間を使用してクエリを記述してください。
 
-```cs
-var meter = new Meter();
-```
-
-例外: `private` フィールド及びプロパティを除きます。
-
-```cs
-public class Foo {
-    private Meter _meter = new();
-}
-```
-
-### cypherクエリとして解釈されることを意図している定数文字列にはコメントをつける
-
-JetBrains Rider を使用し、推奨プラグインを読み込んでいる場合、コードベースでハイライトが効くようになります。
 例:
 
-```csharp
-// language=cypher
-const string CREATE_USER = "CREATE (:Person{name:\"Taro\", age:20});"
+```scala
+val handle = "Taro"
+c"CREATE (:Person{name: $handle, age: 20})"
 ```
 
 ## 意味論的な規則
@@ -337,108 +294,102 @@ has-a 関係が成立するときに継承を用いないでください。
 
 これにはデータベースから null が返ってこないこと、HTTP リクエストが特定の形式に従っていること、外部サービスからの取得結果が特定の規則に従っていることなどがありますが、それに限りません。
 
-### リソース管理を伴うクラスは必ず破棄できるようにする
+### リソース管理には cats.effect.Resource を使用する
 
-リソース管理を伴うクラスはIDisposableまたはIAsyncDisposableを必ず実装し、Dispose()/DisposeAsync()後のメソッド呼び出しではObjectDisposedExceptionをスローします。Dispose/DisposeAsyncを複数回呼び出しても例外を投げない実装を推奨しますが、Dispose済みインスタンスの再利用は必ず例外で検出できるようにしてください。
+リソース管理を伴う処理には `cats.effect.Resource` を使用してください。`Resource` は取得と解放を安全に管理し、例外発生時も確実にリソースを解放します。
 
-### 非同期メソッドのキャンセル設計
+```scala
+val driverResource: Resource[F, AsyncDriver[F]] =
+  GraphDatabase.asyncDriver[F](uri, authToken)
 
-非同期メソッド（async）には可能な限りCancellationTokenパラメータを追加し、呼び出し側がキャンセル制御できるようにしてください。メソッド内でtoken.ThrowIfCancellationRequested()を適切なタイミングで呼び出し、キャンセル要求を速やかに反映します。CancellationTokenのデフォルト値はdefaultでよいですが、意図がある場合はドキュメントで説明します。
+driverResource.use { driver =>
+  // driver を使った処理
+}
+```
+
+### エフェクトのキャンセル設計
+
+cats-effect の `IO` は自動的にキャンセルをサポートします。長時間実行される処理では `IO.cancelBoundary` を適切に挿入してキャンセルポイントを設けてください。
 
 ### 準正常系ケースに例外を使用しない
 
 例外を使用するのは異常系のケースに限定します。
 
-### `partial` の使用はコード生成および責務分離に限定する
+### タプルの使用はスコープを限定し、要素名を説明的にする
 
-`partial` キーワードを使用してクラスや構造体を定義する場合は、以下のような目的に限定してください。
-
-- 自動生成されたコードと手書きコードの分離（例: `*.g.cs` ファイル）
-- 単一クラスに複数の責務（ビューとロジックなど）を明示的に分割する場合
-
-上記以外の理由による `partial` の使用は避けてください。
-
-### 匿名型およびタプルの使用はスコープを限定し、要素名を説明的にする
-
-匿名型 (`new { ... }`) や `ValueTuple` (`(int x, int y)`) を使用する場合は、以下を守ってください。
+タプル (`(Int, String)`) を使用する場合は、以下を守ってください。
 
 - 使うスコープを限定的（メソッド内）にとどめる
-- 要素名は必ず意味のあるものにする
-- メソッドの戻り値やフィールドとしては使用しない（型情報が失われるため）
+- 公開 API には case class を使用する
 
 悪い例:
 
-```cs
-return (1, 2);
+```scala
+def counts: (Int, Int) = (1, 2)
 ```
 
 良い例:
 
-```cs
-return (rowCount: 1, columnCount: 2);
+```scala
+case class Counts(rowCount: Int, columnCount: Int)
+def counts: Counts = Counts(rowCount = 1, columnCount = 2)
 ```
 
 ### 独自の例外型には `Exception` を末尾に付け、スロー条件を明確にする
 
-独自の例外型を定義する場合は、`System.Exception` またはそのサブクラスを継承し、型名の末尾に `Exception` を付けてください。
+独自の例外型を定義する場合は、`Exception` またはそのサブクラスを継承し、型名の末尾に `Exception` を付けてください。
 
 - `InvalidConfigurationException`
 - `DataAccessException`
 
-また、例外をスローする際には、その条件をドキュメントまたはコードコメントで明示してください。
+ただし、エフェクトを使用している場合は例外よりも `Either` や `F.raiseError` を優先してください。
 
-```cs
-/// Throws when the user is not found in the database.
-throw new UserNotFoundException(userId);
+### Option を積極的に使用する
+
+`null` の代わりに `Option` を使用してください。Java ライブラリとの相互運用時は `Option.apply` で `null` を `None` に変換してください。
+
+```scala
+val maybeValue: Option[String] = Option(javaMethod()) // null を None に変換
 ```
 
-例外を返すのではなく、投げる（throw）ことを前提としてください。
+### 値オブジェクトは case class または opaque type にする
 
-### nullable reference types をすべてのアセンブリで使う
+- 単純なラッパー型には opaque type を使用してください
+- 複数のフィールドを持つ値オブジェクトには case class を使用してください
 
-すべてのアセンブリで nullable reference types を有効とし、nullable reference types に対応したコードのみを記述してください。
+```scala
+// opaque type の例
+opaque type UserId = UUID
+object UserId {
+  def apply(id: UUID): UserId = id
+  extension (id: UserId) def raw: UUID = id
+}
 
-アセンブリ全体で NRT を有効にするためには、その `.csproj` に次のように記述します。
-
-```xml
-<!-- <PropertyGroup> 内 -->
-<Nullable>enable</Nullable>
+// case class の例
+final case class User(id: UserId, name: String)
 ```
 
-* `string?` など、 `null` 許容型を意図的に使う場合は、`null` になるケース、及びその時の値の取り扱いについてコメントで明記してください。
-* `#nullable disable` は使用禁止とします。
-    * `null` である可能性を排除したい場合は、明示的な `null` チェックによって `null` かどうかをチェックするようにしてください。
-    * 明示的な `null` チェックを入れることなく `null` である可能性を排除したい場合、`!` 演算子によって排除してください。
+### `val` を使う
 
-### 値オブジェクトはできるだけ `record struct` にする
+イミュータブルなオブジェクトを実現するため、`var` の代わりに `val` を使用してください。`var` が必要な場合は、その理由をコメントで説明してください。
 
-`record struct` を用いると、スタック上に乗るようになり、かつコンパイラーが自動的に挿入する防御的クローンもなくなるためメリットが大きいです。
+### case class のフィールドは不変にする
 
-### `readonly` を使う
-
-イミュータブルなオブジェクトを厳密に実現するのは不可能ですが、再代入を禁止することはできます。その一歩が `readonly` です。
-
-### 必要なとき以外セッターを生やさない
-
-セッターはイミュータブル性にとって最大の敵です。必要な時を除き、セッターを生やさないようにしましょう。
+case class のフィールドには `var` を使用しないでください。更新が必要な場合は `copy` メソッドを使用してください。
 
 ## コレクション
 
-### `Memory<T>` よりも `Span<T>`
+### 不変コレクションを優先する
 
-後者は `stackalloc` 演算子のターゲットにもなります。
+Scala の不変コレクション（`List`, `Vector`, `Set`, `Map` など）を優先して使用してください。可変コレクションが必要な場合は `scala.collection.mutable` パッケージを明示的にインポートしてください。
 
-### `Memory<T>` よりも `ReadOnlyMemory<T>`
+### `Array` よりも `Vector` または `List`
 
-要素の書き換えが必要ないならば、 `ReadOnly` がついたほうを採用してください。 `Span<T>` も同様です。
+配列は可変であるため、不変の `Vector` または `List` を優先してください。パフォーマンスが重要な場合のみ `Array` を使用してください。
 
-### `T[]` よりも `List<T>`
+### 具体的な型よりも抽象的な型
 
-要素数が固定である場合を除いて、 `List<T>` を使うようにしましょう。
-
-### `List<T>` よりも `IEnumerable<T>`
-
-反復するだけ・LINQを使いたいだけなら `IEnumerable<T>` にしましょう。
+メソッドの引数には具体的なコレクション型ではなく、`Seq`, `Iterable`, `IterableOnce` などの抽象的な型を使用してください。
 
 ## 外部入力
 
@@ -460,61 +411,52 @@ Cypherクエリを文字列結合で組み立てることを禁止します。
 
 理由: SQL インジェクションと同じ原理で、 Cypher-Injection になります。
 
-改善方法: [java.sql.PreparedStatement](https://docs.oracle.com/javase/jp/8/docs/api/java/sql/PreparedStatement.html) よろしく、パラメーターバインディング構文が用意されているのでそれを使うようにしましょう。
+改善方法: neotypes の文字列補間 (`c""`) を使用してください。パラメータは自動的にエスケープされます。
 
 例:
-```csharp
-        await using var session = driver.AsyncSession(sess => sess.WithDefaultAccessMode(AccessMode.Write));
-
-        await session.ExecuteWriteAsync(tx =>
-        {
-            // language=cypher
-            var query = "CREATE (n:Person { handle: $name, id: $id })";
-            var parameters = new { name = user.GetPreferredHandle(), id = user.GetIdentifier().Raw.ToString() };
-
-            return tx.RunAsync(query);
-        });
+```scala
+val handle = user.preferredHandle
+val id = user.getIdentifier.raw.toString
+c"CREATE (n:Person { handle: $handle, id: $id })".execute.void(driver)
 ```
 
-Note: 匿名型の使用は上記のセクションでクラスメソッドの外にでない場合は許可されています。
+## 関数型プログラミング
 
-## LINQ
+### for 内包表記を適切に使用する
 
-### クエリ式を使わない
+複数のモナディック操作を連鎖させる場合は for 内包表記を使用してください。
 
-クエリ式を禁止します。
+```scala
+for {
+  user <- findUser(id)
+  profile <- loadProfile(user)
+  _ <- updateLastLogin(user)
+} yield profile
+```
 
-理由: 一貫性に欠けるため。
+### 高階関数のラムダ内で副作用を起こさない
 
-修正方法: `IEnumerable`・`IQueryable` などのメソッドチェーンを使う。
+`map`, `filter`, `flatMap` などの高階関数に渡すラムダ内で副作用を起こす操作を禁止します。
 
-### ラムダの中で参照透過性を損なう操作を起こさない
+理由: デバッグが困難になるため。
 
-LINQメソッドチェーンに与えるラムダの中で、副作用を起こす操作を禁止します。
-
-理由: デバッグするのが大変になるため。
-
-修正方法: 参照透過性を損なう操作をラムダ式から追い出す。
+修正方法: 副作用が必要な場合は `foreach` または cats-effect の `traverse` を使用してください。
 
 ### メソッドチェーンは1回につき1行使う
 
-1行に押し込められていると横に伸びてしまうため、LINQメソッド1回の呼び出しにつき1行を使用してください。
+1行に押し込められていると横に伸びてしまうため、メソッドチェーン1回の呼び出しにつき1行を使用してください。
 
-### ToList や ToArray などの集約関数を不必要に呼び出さない
+### 遅延評価を意識する
 
-`ToList` や `ToArray` はソースをすべて消費して、 `List<T>` や `T[]` を生成します。また、無限に生成されるソースに対して呼び出したり、メモリ消費が激しい型に対して呼び出すとメモリ枯渇によるサービス拒否に繋がります。
-
-そのため、それらの値全体が厳密にほしい時を除いて、不必要に呼び出さないでください。
-
-修正方法: 単に反復したいだけなら `foreach` 文に渡してください。
+`LazyList` やイテレータを使用している場合、`toList` や `toVector` で具体化するタイミングに注意してください。無限シーケンスに対して呼び出すとメモリ枯渇につながります。
 
 ## ドキュメンテーション
 
-### xml docs は必要なとき以外書かない
+### ScalaDoc は必要なとき以外書かない
 
-XML Docs. は腐りやすいです。原則「ドキュメントよりも命名、命名よりもシグネチャ」に反するため、挙動を特に説明したいとき以外は原則書かないようにしてください。
+ScalaDoc は腐りやすいです。原則「ドキュメントよりも命名、命名よりもシグネチャ」に反するため、挙動を特に説明したいとき以外は原則書かないようにしてください。
 
-「挙動を特に説明したいとき」とは、シグネチャでも命名でも説明できない文脈や事項を注記し、その内容をツールチップで表示したいときを指します。
+「挙動を特に説明したいとき」とは、シグネチャでも命名でも説明できない文脈や事項を注記し、その内容を IDE のツールチップで表示したいときを指します。
 
 ### コードと異なるファイルに置かれるドキュメントには、高次のドキュメントのみ置く
 
