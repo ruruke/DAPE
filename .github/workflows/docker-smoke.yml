@@ -25,4 +25,4 @@ jobs:
 
       - name: Run container
         run: |
-          docker run --rm dape:test --version || (echo "Container failed to start" && exit 1)
+          docker run --rm dape:test --help || (echo "Container failed to start" && exit 1)

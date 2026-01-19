@@ -23,25 +23,25 @@ DAPE は動作に以下のハードウェアを必要とします。
 DAPE は動作に以下のソフトウェアを必要とします。
 
 * Neo4j 5.24
-* .NET SDK 9.0.6
-    * ASP.NET もインストールしてください
+* JDK 21 (Eclipse Temurin 推奨)
+* sbt 1.10.x
 
 ### 推奨開発環境
 
-* Jetbrains Rider
-    * [Graph Database](https://plugins.jetbrains.com/plugin/20417)
+* IntelliJ IDEA (Scala Plugin)
+* [Graph Database Plugin](https://plugins.jetbrains.com/plugin/20417)
 
 ### ビルド
 ```shell
-$ dotnet build
+$ sbt compile
 ```
 
 ### DAPE の立ち上げ
 
 ```shell
-KisaragiTech.Dape/KisaragiTech.Dape$ mkdir ../run
-KisaragiTech.Dape/KisaragiTech.Dape$ "$EDITOR" ../run/config.json
-KisaragiTech.Dape/KisaragiTech.Dape$ dotnet run -- --run-dir ../run
+$ mkdir run
+$ "$EDITOR" run/config.json
+$ sbt "run --run-dir run"
 ```
 
 ### コンフィグの例
@@ -60,7 +60,12 @@ Neo4jの初期ユーザーはすべての権限を持っているため、適宜
 
 ### テスト
 ```shell
-$ dotnet test
+$ sbt test
+```
+
+### fat JAR のビルド
+```shell
+$ sbt assembly
 ```
 
 ## よくある質問
