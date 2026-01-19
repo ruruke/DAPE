@@ -24,10 +24,10 @@ jobs:
           cache: 'sbt'
 
       - name: Check formatting
-        run: sbt scalafmtCheckAll
+        run: ./sbt scalafmtCheckAll
 
       - name: Compile
-        run: sbt compile
+        run: ./sbt compile
 
       - name: Run tests
-        run: sbt test
+        run: ./sbt test
