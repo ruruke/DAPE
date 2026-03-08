@@ -24,7 +24,8 @@ object PasswordGenerator {
   def generate[F[_]: { SecureRandom, MonadThrow as mt }](length: Int = 20): F[String] = for {
     _ <- mt.assert(length > 0, "length must be positive")
     sb = new StringBuilder(length)
-    cc <- SecureRandom[F].nextIntBounded(Alphabet.length)
+    cc <- SecureRandom[F]
+      .nextIntBounded(Alphabet.length)
       .map(Alphabet.charAt)
       .replicateA(length)
   } yield sb.appendAll(cc).toString()
