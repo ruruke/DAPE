@@ -1,8 +1,10 @@
 package io.github.ksrgtech.dape.user.service
 
-import cats.effect.kernel.Sync
+import cats.MonadThrow
+import cats.effect.std.SecureRandom
+import cats.implicits.given
 
-import java.security.SecureRandom
+import io.github.ksrgtech.dape.base.cats.assert
 
 object PasswordGenerator {
 
@@ -17,15 +19,12 @@ object PasswordGenerator {
       // Symbols (adjustable)
       "!@#$%^&*()-_=+[]{}|;:,.<>?"
 
-  def generate[F[_]: Sync](length: Int = 20): F[String] =
-    Sync[F].delay {
-      require(length > 0, "length must be positive")
-      val rng = new SecureRandom()
-      val sb  = new StringBuilder(length)
-      for _ <- 0 until length do {
-        val index = rng.nextInt(Alphabet.length)
-        sb.append(Alphabet.charAt(index))
-      }
-      sb.toString()
-    }
+  def generate[F[_]: { SecureRandom, MonadThrow as mt }](length: Int = 20): F[String] = for {
+    _ <- mt.assert(length > 0, "length must be positive")
+    sb = new StringBuilder(length)
+    cc <- SecureRandom[F]
+      .nextIntBounded(Alphabet.length)
+      .map(Alphabet.charAt)
+      .replicateA(length)
+  } yield sb.appendAll(cc).toString()
 }
