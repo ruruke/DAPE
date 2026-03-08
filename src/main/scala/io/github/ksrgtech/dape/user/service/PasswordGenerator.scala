@@ -1,10 +1,8 @@
 package io.github.ksrgtech.dape.user.service
 
-import cats.{ApplicativeError, MonadThrow}
-import cats.effect.kernel.Sync
+import cats.MonadThrow
 import cats.effect.std.SecureRandom
-import cats.implicits.{given, *}
-import unsafeExceptions.canThrowAny
+import cats.implicits.given
 
 import io.github.ksrgtech.dape.base.cats.assert
 
