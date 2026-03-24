@@ -6,11 +6,5 @@
   ],
   "labels": [
     "Renovate"
-  ],
-  "packageRules": [
-    {
-      "matchManagers": ["sbt"],
-      "groupName": "sbt dependencies"
-    }
   ]
 }
