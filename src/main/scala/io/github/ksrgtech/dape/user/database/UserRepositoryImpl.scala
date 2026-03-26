@@ -5,7 +5,7 @@ import cats.implicits.*
 import neotypes.AsyncDriver
 import neotypes.mappers.ResultMapper
 import neotypes.syntax.all.*
-import io.github.ksrgtech.dape.user.model.{LocalRegisteredUser, User, UserId}
+import io.github.ksrgtech.dape.user.model.{LocalRegisteredUser, User}
 
 final class UserRepositoryImpl[F[_]: Async](driver: AsyncDriver[F]) extends UserRepository[F] {
 
@@ -15,7 +15,7 @@ final class UserRepositoryImpl[F[_]: Async](driver: AsyncDriver[F]) extends User
   }
 
   override def findUserByPreferredHandle(preferredHandle: String): F[Boolean] =
-    c"MATCH (n:Person { handle: $preferredHandle }) RETURN true AS exists LIMIT 1"
+    c"MATCH (n:User { handle: $preferredHandle }) RETURN true AS exists LIMIT 1"
       .query(ResultMapper.option(using ResultMapper.boolean))
       .single(driver)
       .map(_.getOrElse(false))
@@ -31,13 +31,15 @@ final class UserRepositoryImpl[F[_]: Async](driver: AsyncDriver[F]) extends User
       }
     }
 
-  override def insertUser(user: LocalRegisteredUser): F[Unit] =
+  override def insertUser(user: LocalRegisteredUser): F[Unit] = {
+    // FIXME: TOCTOU
     for {
       _ <- assertPreferredHandleUniqueness(user)
       handle = user.preferredHandle
       id     = user.getIdentifier.raw.toString
-      _ <- c"CREATE (n:Person { handle: $handle, id: $id })".execute.void(driver)
+      _ <- c"CREATE (n:User { handle: $handle, id: $id })".execute.void(driver)
     } yield ()
+  }
 
   override def createRootUser(user: LocalRegisteredUser): F[Unit] =
     hasRootUser.flatMap { exists =>
