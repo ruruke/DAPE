@@ -6,6 +6,7 @@ import neotypes.AsyncDriver
 import neotypes.mappers.ResultMapper
 import neotypes.syntax.all.*
 import io.github.ksrgtech.dape.user.model.{LocalRegisteredUser, User}
+import io.github.ksrgtech.dape.base.cats.assert
 
 final class UserRepositoryImpl[F[_]: Async](driver: AsyncDriver[F]) extends UserRepository[F] {
 
@@ -31,7 +32,7 @@ final class UserRepositoryImpl[F[_]: Async](driver: AsyncDriver[F]) extends User
       }
     }
 
-  override def insertUser(user: LocalRegisteredUser): F[Unit] = {
+  override def insertUser(user: LocalRegisteredUser): F[Unit] =
     // FIXME: TOCTOU
     for {
       _ <- assertPreferredHandleUniqueness(user)
@@ -39,16 +40,15 @@ final class UserRepositoryImpl[F[_]: Async](driver: AsyncDriver[F]) extends User
       id     = user.getIdentifier.raw.toString
       _ <- c"CREATE (n:User { handle: $handle, id: $id })".execute.void(driver)
     } yield ()
-  }
 
   override def createRootUser(user: LocalRegisteredUser): F[Unit] =
-    hasRootUser.flatMap { exists =>
-      if exists then {
-        Async[F].raiseError(
-          new IllegalStateException("Root user already exists")
-        )
-      } else {
-        insertUser(user)
-      }
-    }
+    // FIXME: TOCTOU
+    for {
+      _        <- assertPreferredHandleUniqueness(user)
+      haveRoot <- this.hasRootUser
+      _        <- Async[F].assert(haveRoot, "root user has been created!")
+      handle = user.preferredHandle
+      id     = user.getIdentifier.raw.toString
+      _ <- c"CREATE (n:User:Person { handle: $handle, id: $id, root: true })".execute.void(driver)
+    } yield ()
 }
